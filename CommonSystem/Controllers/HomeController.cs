@@ -16,7 +16,7 @@ namespace CommonSystem.Controllers
         }
         public IActionResult Index()
         {
-            _logger.LogError("111111111");
+            //_logger.LogError("111111111");
             return View();
         }
     }
