@@ -37,9 +37,9 @@ namespace TestWebApi.Controllers
         }
 
         [HttpPost]
-        public string Test(string Test)
+        public string Post(string Test)
         {
-            return "Test"+Test;
+            return "Test "+ Test;
         }
     }
 }
