@@ -7,5 +7,8 @@ using System.Threading.Tasks;
 
 namespace CommonSystem.Filter
 {
-  
+    public static class ControllerExtension
+    {
+       
+    }
 }
