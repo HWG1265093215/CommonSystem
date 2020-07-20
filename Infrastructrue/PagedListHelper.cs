@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Infrastructrue
 {
-    public class PagedList<T>
+    public class PagedListHelper<T>
     {
         /// <summary>
         /// 数据集
@@ -53,7 +53,7 @@ namespace Infrastructrue
         /// <param name="page">当前页</param>
         /// <param name="size">页数</param>
         /// <param name="count">总条数</param>
-        public PagedList(List<T> items, int size, int count, int page)
+        public PagedListHelper(List<T> items, int size, int count, int page)
         {
             TotalCount = count;
             PageSize = size;
@@ -65,7 +65,7 @@ namespace Infrastructrue
 
     public static class IQueryableExtend
     {
-        public static PagedList<T> ToPageList<T>(this IOrderedQueryable<T> query,int size, int page = 20)
+        public static PagedListHelper<T> ToPageList<T>(this IOrderedQueryable<T> query,int size, int page = 20)
         {
             //获取总页数
             double totalQuery = query.Count();
@@ -79,7 +79,7 @@ namespace Infrastructrue
                 page = 1;
             }
             var list = query.Skip(size * (page - 1)).Take(size).ToList();
-            return new PagedList<T>((List<T>)query,page,size,(int)totalQuery);
+            return new PagedListHelper<T>((List<T>)query,page,size,(int)totalQuery);
         }
     }
 

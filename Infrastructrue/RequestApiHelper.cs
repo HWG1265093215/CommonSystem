@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace Infrastructrue
 {
-    public static class RequestApi
+    public static class RequestApiHelper
     {
         //返回序列化字符串
         public static string GetRequestApi(string url,Dictionary<string,string> list,string Method="Get")

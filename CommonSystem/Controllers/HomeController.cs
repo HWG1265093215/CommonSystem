@@ -26,7 +26,7 @@ namespace CommonSystem.Controllers
 
         public IActionResult Test()
         {
-            string Code = SecurityExtend.CreateValidateCode(4);
+            string Code = SecurityExtendHelper.CreateValidateCode(4);
             byte[] bytes =HttpContext.CreateValidateGraphic(Code);
             return File(bytes,@"image/jpeg");
         }

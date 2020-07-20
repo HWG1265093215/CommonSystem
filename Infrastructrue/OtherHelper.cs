@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Infrastructrue
 {
-    public static class OtherExtend
+    public static class OtherHelper
     {
         /// <summary>  
         /// 运行一个控制台程序并返回其输出参数。  
