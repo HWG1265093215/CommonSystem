@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Infrastructrue
 {
@@ -103,6 +106,76 @@ namespace Infrastructrue
 
             throw new Exception("命令参数无效，必须传入一个控制台能被cmd.exe可执行程序;\n如：ping 127.0.0.1");
         }
+
+
+        /// <summary>
+        /// 创建xml文件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="document"></param>
+        /// <param name="UrlPath"></param>
+        /// <param name="list"></param>
+         public static void CreateListXml<T>(this XmlDocument document,string UrlPath,List<T> list)
+         {
+            XmlDocument xml = new XmlDocument();
+            XmlElement element = xml.CreateElement("Root");
+            foreach (var item in list)
+            {
+                XmlNode node = xml.CreateElement(typeof(T).Name);
+                element.AppendChild(node);
+                foreach (var property in typeof(T).GetProperties())
+                {
+                    XmlElement node1 = xml.CreateElement(property.Name);
+                    node1.InnerText = typeof(T).GetProperty(property.Name).GetValue(typeof(T), null).ToString();
+                    node.AppendChild(node1);
+                }
+            }
+            xml.Save(UrlPath);
+        }
+
+        public static void AppendList<T>(this XmlDocument xml, string url,List<T> list)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(url);
+            XmlElement element = doc.DocumentElement;
+            foreach (var item in list)
+            {
+                XmlNode node = doc.CreateElement(typeof(T).Name);
+                element.AppendChild(node);
+                foreach (var property in typeof(T).GetProperties())
+                {
+                    XmlElement node1 = doc.CreateElement(property.Name);
+                    node1.InnerText = typeof(T).GetProperty(property.Name).GetValue(typeof(T), null).ToString();
+                    node.AppendChild(node1);
+                }
+            }
+            doc.Save(url);
+        }
+
+        public static List<T> SerialierList<T>(this XmlDocument xml,string url)
+        {
+            XmlDocument document = new XmlDocument();
+            document.Load(url);
+            XmlNodeList nodeList = xml.DocumentElement.ChildNodes;
+            List<T> list = new List<T>();
+            foreach (XmlNode item in nodeList)
+            {
+                if(item.Name==item.Name)
+                {
+                    using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(item.OuterXml)))
+                    {
+                        using (XmlReader reader = XmlReader.Create(ms))
+                        {
+                            XmlSerializer formatter = new XmlSerializer(typeof(T));
+                            T stu = (T)formatter.Deserialize(reader);
+                            list.Add(stu);
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+        
 
 
     }
