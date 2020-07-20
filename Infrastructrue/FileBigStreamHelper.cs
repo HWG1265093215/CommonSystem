@@ -16,7 +16,7 @@ using SharpCompress.Common;
 
 namespace Infrastructrue
 {
-    public static class FileBigStream
+    public static class FileBigStreamHelper
     {
         /// <summary>
         ///以文件流形式复制文件

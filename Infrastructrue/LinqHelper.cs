@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Infrastructrue
 {
-    public static class LinqExtend
+    public static class LinqHelper
     {
         /// <summary>
         /// LINQ扩展方法

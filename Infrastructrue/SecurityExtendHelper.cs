@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Infrastructrue
 {
-    public static class SecurityExtend
+    public static class SecurityExtendHelper
     {
         /// <summary>
         /// 生成验证码

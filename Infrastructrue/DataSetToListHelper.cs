@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Infrastructrue
 {
-    public static class DataSetToList
+    public static class DataSetToListHelper
     {
         public static List<T> DataTableToList<T>(this DataTable dataTable)
         {
