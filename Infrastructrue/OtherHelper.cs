@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -176,7 +177,85 @@ namespace Infrastructrue
             return list;
         }
         
+        /// <summary>
+        /// Ftp文件上传
+        /// </summary>
+        /// <param name="Url">路径</param>
+        /// <param name="BaseFileName">本地文件名字</param>
+        /// <param name="RomoteFileName">上传到Ftp的文件名字</param>
+        /// <returns></returns>
+        public static bool FtpUpLoadFile(string Url,string BaseFileName,string RomoteFileName)
+        {
+            bool b = false;
+            FtpWebRequest ftpWeb;
+            //判断文件是否存在
+            if(File.Exists(BaseFileName))
+            {
+                ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://"+Url+"/"+ RomoteFileName));
+                //要发到ftp的命令
+                ftpWeb.Method = WebRequestMethods.Ftp.UploadFile;
+                //指定文件传输类型
+                ftpWeb.UseBinary = true;
+                //验证用户和密码
+                #warning  账号密码待补全
+                ftpWeb.Credentials = new NetworkCredential("","");
+                //获取响应的流
+                using (Stream rs=ftpWeb.GetRequestStream())
+                {
+                    //上传文件流
+                    using (FileStream file=new FileStream(BaseFileName,FileMode.OpenOrCreate,FileAccess.ReadWrite))
+                    {
+                        //4k字节
+                        byte[] buffer = new byte[4096];
+                        int count = file.Read(buffer,0,buffer.Length);
+                        //判断文件流是
+                        while (count>0)
+                        {
+                            //写入到Ftp文件流而不是本地
+                            rs.Write(buffer,0,count);
+                            count = file.Read(buffer,0,buffer.Length);
+                        }
+                        file.Close();
+                        b = true;
+                    }
+                }
+                return b;
+            }
+            throw new Exception("UpLoadFile not Find!");
+        }
 
+        public static bool FtpDownLoadFile(string Url,string FileName)
+        {
+            FtpWebRequest ftpWeb;
+            try
+            {
+                using (FileStream fs=new FileStream(FileName,FileMode.OpenOrCreate))
+                {
+                    ftpWeb = (FtpWebRequest)WebRequest.Create(new Uri("ftp://"+Url+"/"+FileName));
+                    ftpWeb.Method = WebRequestMethods.Ftp.DownloadFile;
+                    ftpWeb.UseBinary = true;
+                    ftpWeb.ContentOffset = fs.Length;
+                    ftpWeb.Credentials = new NetworkCredential("","");
+                    using (FtpWebResponse webResponse= (FtpWebResponse)ftpWeb.GetResponse())
+                    {
+                        fs.Position = fs.Length;
+                        byte[] buffer = new byte[4096];
+                        int count = webResponse.GetResponseStream().Read(buffer,0,buffer.Length);
+                        while(count>0)
+                        {
+                            fs.Write(buffer,0,count);
+                            count = webResponse.GetResponseStream().Read(buffer,0,buffer.Length);
+                        }
+                    }
+                    fs.Close();
+                }
+                return true;
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+        }
     }
 }
