@@ -257,5 +257,29 @@ namespace Infrastructrue
                 throw;
             }
         }
+
+        public static bool FtpDeleteFile(string Url)
+        {
+            FtpWebRequest ftpWeb;
+            ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://"+Url));
+            ftpWeb.Method = WebRequestMethods.Ftp.DeleteFile;
+            ftpWeb.UseBinary = true;
+            ftpWeb.Credentials = new NetworkCredential();
+            FtpWebResponse response = (FtpWebResponse)ftpWeb.GetResponse();
+            response.Close();
+            return true;
+        }
+        public static bool FtpCreateDir(string Url)
+        {
+            FtpWebRequest ftpWeb;
+            ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + Url));
+            ftpWeb.Method = WebRequestMethods.Ftp.MakeDirectory;
+            ftpWeb.UseBinary = true;
+            ftpWeb.Credentials = new NetworkCredential("Ftp_Server", "123456");
+            FtpWebResponse web = (FtpWebResponse)ftpWeb.GetResponse();
+
+            web.Close();
+            return true;
+        }
     }
 }
