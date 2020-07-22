@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -371,6 +373,18 @@ namespace Infrastructrue
             /// 发件人密码（非必填）
             /// </summary>
             public string SenderPassword { get; set; }
+        }
+
+        public static void TestProc()
+        {
+
+            SqlConnection sqlcon = new SqlConnection("Data Source=.;Initial Catalog=Test;Integrated Security=True");
+            string sql = @"SELECT A.name AS table_name,B.name AS column_name,C.value AS column_description FROM sys.tables A INNER JOIN sys.columns B ON B.object_id = A.object_id LEFT JOIN sys.extended_properties C ON C.major_id = B.object_id AND C.minor_id = B.column_id WHERE A.name = 'TestTable2'";
+            sqlcon.Open();
+            DataSet dataSet = new DataSet();
+            SqlDataAdapter adapter = new SqlDataAdapter("exec Test", sqlcon);
+            adapter.Fill(dataSet);
+            DataTable data = dataSet.Tables[0];
         }
     }
 }
