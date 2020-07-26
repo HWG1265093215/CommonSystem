@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Infrastructrue
 {
@@ -89,5 +90,54 @@ namespace Infrastructrue
             context.Response.ContentType = "image/jpeg";
             return stream.ToArray();
         }
+
+        /// <summary>
+        /// MD5函数
+        /// </summary>
+        /// <param name="str">原始字符串</param>
+        /// <returns>MD5结果</returns>
+        public static string MD5(string str)
+        {
+            byte[] b = Encoding.UTF8.GetBytes(str);
+            b = new MD5CryptoServiceProvider().ComputeHash(b);
+            string ret = "";
+            for (int i = 0; i < b.Length; i++)
+                ret += b[i].ToString("x").PadLeft(2, '0');
+
+            return ret;
+        }
+
+        /// <summary>
+        /// SHA256函数
+        /// </summary>
+        /// /// <param name="str">原始字符串</param>
+        /// <returns>SHA256结果</returns>
+        public static string SHA256(string str)
+        {
+            byte[] SHA256Data = Encoding.UTF8.GetBytes(str);
+            SHA256Managed Sha256 = new SHA256Managed();
+            byte[] Result = Sha256.ComputeHash(SHA256Data);
+            return Convert.ToBase64String(Result);  //返回长度为44字节的字符串
+        }
+
+        /// <summary>
+        /// 自定义的替换字符串函数
+        /// </summary>
+        public static string ReplaceString(string SourceString, string SearchString, string ReplaceString, bool IsCaseInsensetive)
+        {
+            return Regex.Replace(SourceString, Regex.Escape(SearchString), ReplaceString, IsCaseInsensetive ? RegexOptions.IgnoreCase : RegexOptions.None);
+        }
+
+        /// <summary>
+        /// 检测是否有Sql危险字符
+        /// </summary>
+        /// <param name="str">要判断字符串</param>
+        /// <returns>判断结果</returns>
+        public static bool IsSafeSqlString(string str)
+        {
+            return !Regex.IsMatch(str, @"[-|;|,|\/|\(|\)|\[|\]|\}|\{|%|@|\*|!|\']");
+        }
+
+
     }
 }

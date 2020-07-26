@@ -18,6 +18,19 @@ namespace Infrastructrue
 {
     public static class FileBigStreamHelper
     {
+        public static string readHtml(string filePath)
+        {//读取文件内容
+            StreamReader sr = new StreamReader(filePath, System.Text.Encoding.GetEncoding("utf-8"));
+            String input;
+            string tmpstr = "";
+            while ((input = sr.ReadLine()) != null)
+            {
+                tmpstr = tmpstr + input.ToString() + "\n";
+            }
+            sr.Close();
+            return tmpstr;
+        }
+
         /// <summary>
         ///以文件流形式复制文件
         /// </summary>

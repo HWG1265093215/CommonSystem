@@ -6,8 +6,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -379,12 +381,332 @@ namespace Infrastructrue
         {
 
             SqlConnection sqlcon = new SqlConnection("Data Source=.;Initial Catalog=Test;Integrated Security=True");
+            #warning 读取表注释
             string sql = @"SELECT A.name AS table_name,B.name AS column_name,C.value AS column_description FROM sys.tables A INNER JOIN sys.columns B ON B.object_id = A.object_id LEFT JOIN sys.extended_properties C ON C.major_id = B.object_id AND C.minor_id = B.column_id WHERE A.name = 'TestTable2'";
             sqlcon.Open();
             DataSet dataSet = new DataSet();
             SqlDataAdapter adapter = new SqlDataAdapter("exec Test", sqlcon);
             adapter.Fill(dataSet);
             DataTable data = dataSet.Tables[0];
+        }
+
+        /// <summary>
+        /// 返回指定日期格式
+        /// </summary>
+        public static string GetDate(string datetimestr, string replacestr)
+        {
+            if (datetimestr == null)
+                return replacestr;
+
+            if (datetimestr.Equals(""))
+                return replacestr;
+
+            try
+            {
+                datetimestr = Convert.ToDateTime(datetimestr).ToString("yyyy-MM-dd").Replace("1900-01-01", replacestr);
+            }
+            catch
+            {
+                return replacestr;
+            }
+            return datetimestr;
+        }
+
+        /// <summary>
+        /// 返回 HTML 字符串的编码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>编码结果</returns>
+        public static string HtmlEncode(string str)
+        {
+            return HttpUtility.HtmlEncode(str);
+        }
+
+
+        /// <summary>
+        /// 返回 HTML 字符串的解码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>解码结果</returns>
+        public static string HtmlDecode(string str)
+        {
+            return HttpUtility.HtmlDecode(str);
+        }
+
+        /// <summary>
+        /// 返回 URL 字符串的编码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>编码结果</returns>
+        public static string UrlEncode(string str)
+        {
+            return HttpUtility.UrlEncode(str);
+        }
+
+        /// <summary>
+        /// 返回 URL 字符串的编码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>解码结果</returns>
+        public static string UrlDecode(string str)
+        {
+            return HttpUtility.UrlDecode(str);
+        }
+
+        /// <summary>
+        /// 建立文件夹
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static bool CreateDir(string name)
+        {
+            return MakeSureDirectoryPathExists(name);
+        }
+
+        /// <summary>
+        /// 为脚本替换特殊字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string ReplaceStrToScript(string str)
+        {
+            return str.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\"", "\\\"");
+        }
+
+        /// <summary>
+        /// 创建目录
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <returns>创建是否成功</returns>
+        [DllImport("dbgHelp", SetLastError = true)]
+        private static extern bool MakeSureDirectoryPathExists(string name);
+
+        /// <summary>
+        /// 备份文件
+        /// </summary>
+        /// <param name="sourceFileName">源文件名</param>
+        /// <param name="destFileName">目标文件名</param>
+        /// <param name="overwrite">当目标文件存在时是否覆盖</param>
+        /// <returns>操作是否成功</returns>
+        public static bool BackupFile(string sourceFileName, string destFileName, bool overwrite)
+        {
+            if (!System.IO.File.Exists(sourceFileName))
+                throw new FileNotFoundException(sourceFileName + "文件不存在！");
+
+            if (!overwrite && System.IO.File.Exists(destFileName))
+                return false;
+
+            try
+            {
+                System.IO.File.Copy(sourceFileName, destFileName, true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        /// <summary>
+        /// 备份文件,当目标文件存在时覆盖
+        /// </summary>
+        /// <param name="sourceFileName">源文件名</param>
+        /// <param name="destFileName">目标文件名</param>
+        /// <returns>操作是否成功</returns>
+        public static bool BackupFile(string sourceFileName, string destFileName)
+        {
+            return BackupFile(sourceFileName, destFileName, true);
+        }
+
+
+        /// <summary>
+        /// 恢复文件
+        /// </summary>
+        /// <param name="backupFileName">备份文件名</param>
+        /// <param name="targetFileName">要恢复的文件名</param>
+        /// <param name="backupTargetFileName">要恢复文件再次备份的名称,如果为null,则不再备份恢复文件</param>
+        /// <returns>操作是否成功</returns>
+        public static bool RestoreFile(string backupFileName, string targetFileName, string backupTargetFileName)
+        {
+            try
+            {
+                if (!System.IO.File.Exists(backupFileName))
+                    throw new FileNotFoundException(backupFileName + "文件不存在！");
+
+                if (backupTargetFileName != null)
+                {
+                    if (!System.IO.File.Exists(targetFileName))
+                        throw new FileNotFoundException(targetFileName + "文件不存在！无法备份此文件！");
+                    else
+                        System.IO.File.Copy(targetFileName, backupTargetFileName, true);
+                }
+                System.IO.File.Delete(targetFileName);
+                System.IO.File.Copy(backupFileName, targetFileName);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return true;
+        }
+
+        public static bool RestoreFile(string backupFileName, string targetFileName)
+        {
+            return RestoreFile(backupFileName, targetFileName, null);
+        }
+
+        public readonly static VersionInfo AssemblyFileVersion = new VersionInfo();
+
+        private static string TemplateCookieName = string.Format("kztemplateid_{0}_{1}_{2}", AssemblyFileVersion.FileMajorPart, AssemblyFileVersion.FileMinorPart, AssemblyFileVersion.FileBuildPart);
+        /// <summary>
+        /// 获取记录模板id的cookie名称
+        /// </summary>
+        /// <returns></returns>
+        public static string GetTemplateCookieName()
+        {
+            return TemplateCookieName;
+        }
+
+        public class VersionInfo
+        {
+            public int FileMajorPart
+            {
+                get { return 1; }
+            }
+            public int FileMinorPart
+            {
+                get { return 0; }
+            }
+            public int FileBuildPart
+            {
+                get { return 0; }
+            }
+            public string ProductName
+            {
+                get { return "KZ"; }
+            }
+            public string LegalCopyright
+            {
+                get { return "2011, SZKZ.COM"; }
+            }
+        }
+
+        /// <summary>
+        /// 将数据表转换成JSON类型串
+        /// </summary>
+        /// <param name="dt">要转换的数据表</param>
+        /// <returns></returns>
+        public static StringBuilder DataTableToJSON(System.Data.DataTable dt)
+        {
+            return DataTableToJson(dt, true);
+        }
+
+        /// <summary>
+        /// 将数据表转换成JSON类型串
+        /// </summary>
+        /// <param name="dt">要转换的数据表</param>
+        /// <param name="dispose">数据表转换结束后是否dispose掉</param>
+        /// <returns></returns>
+        public static StringBuilder DataTableToJson(System.Data.DataTable dt, bool dt_dispose)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("[\r\n");
+
+            //数据表字段名和类型数组
+            string[] dt_field = new string[dt.Columns.Count];
+            int i = 0;
+            string formatStr = "{{";
+            string fieldtype = "";
+            foreach (System.Data.DataColumn dc in dt.Columns)
+            {
+                dt_field[i] = dc.Caption.ToLower().Trim();
+                formatStr += "'" + dc.Caption.ToLower().Trim() + "':";
+                fieldtype = dc.DataType.ToString().Trim().ToLower();
+                if (fieldtype.IndexOf("int") > 0 || fieldtype.IndexOf("deci") > 0 ||
+                    fieldtype.IndexOf("floa") > 0 || fieldtype.IndexOf("doub") > 0 ||
+                    fieldtype.IndexOf("bool") > 0)
+                {
+                    formatStr += "{" + i + "}";
+                }
+                else
+                {
+                    formatStr += "'{" + i + "}'";
+                }
+                formatStr += ",";
+                i++;
+            }
+
+            if (formatStr.EndsWith(","))
+                formatStr = formatStr.Substring(0, formatStr.Length - 1);//去掉尾部","号
+
+            formatStr += "}},";
+
+            i = 0;
+            object[] objectArray = new object[dt_field.Length];
+            foreach (System.Data.DataRow dr in dt.Rows)
+            {
+
+                foreach (string fieldname in dt_field)
+                {   //对 \ , ' 符号进行转换 
+                    objectArray[i] = dr[dt_field[i]].ToString().Trim().Replace("\\", "\\\\").Replace("'", "\\'");
+                    switch (objectArray[i].ToString())
+                    {
+                        case "True":
+                            {
+                                objectArray[i] = "true"; break;
+                            }
+                        case "False":
+                            {
+                                objectArray[i] = "false"; break;
+                            }
+                        default: break;
+                    }
+                    i++;
+                }
+                i = 0;
+                stringBuilder.Append(string.Format(formatStr, objectArray));
+            }
+            if (stringBuilder.ToString().EndsWith(","))
+                stringBuilder.Remove(stringBuilder.Length - 1, 1);//去掉尾部","号
+
+            if (dt_dispose)
+                dt.Dispose();
+
+            return stringBuilder.Append("\r\n];");
+        }
+
+        /// <summary>
+        /// 字段串是否为Null或为""(空)
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool StrIsNullOrEmpty(string str)
+        {
+            if (str == null || str.Trim() == string.Empty)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// 根据Url获得源文件内容
+        /// </summary>
+        /// <param name="url">合法的Url地址</param>
+        /// <returns></returns>
+        public static string GetSourceTextByUrl(string url)
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create(url);
+                request.Timeout = 20000;//20秒超时
+                WebResponse response = request.GetResponse();
+
+                Stream resStream = response.GetResponseStream();
+                StreamReader sr = new StreamReader(resStream);
+                return sr.ReadToEnd();
+            }
+            catch { return ""; }
         }
     }
 }
