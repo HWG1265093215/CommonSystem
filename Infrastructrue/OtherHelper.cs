@@ -117,8 +117,8 @@ namespace Infrastructrue
         /// <param name="document"></param>
         /// <param name="UrlPath"></param>
         /// <param name="list"></param>
-         public static void CreateListXml<T>(this XmlDocument document,string UrlPath,List<T> list)
-         {
+        public static void CreateListXml<T>(this XmlDocument document, string UrlPath, List<T> list)
+        {
             XmlDocument xml = new XmlDocument();
             XmlElement element = xml.CreateElement("Root");
             foreach (var item in list)
@@ -135,7 +135,7 @@ namespace Infrastructrue
             xml.Save(UrlPath);
         }
 
-        public static void AppendList<T>(this XmlDocument xml, string url,List<T> list)
+        public static void AppendList<T>(this XmlDocument xml, string url, List<T> list)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(url);
@@ -154,7 +154,7 @@ namespace Infrastructrue
             doc.Save(url);
         }
 
-        public static List<T> SerialierList<T>(this XmlDocument xml,string url)
+        public static List<T> SerialierList<T>(this XmlDocument xml, string url)
         {
             XmlDocument document = new XmlDocument();
             document.Load(url);
@@ -162,7 +162,7 @@ namespace Infrastructrue
             List<T> list = new List<T>();
             foreach (XmlNode item in nodeList)
             {
-                if(item.Name==item.Name)
+                if (item.Name == item.Name)
                 {
                     using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(item.OuterXml)))
                     {
@@ -177,7 +177,7 @@ namespace Infrastructrue
             }
             return list;
         }
-        
+
         /// <summary>
         /// Ftp文件上传
         /// </summary>
@@ -185,36 +185,36 @@ namespace Infrastructrue
         /// <param name="BaseFileName">本地文件名字</param>
         /// <param name="RomoteFileName">上传到Ftp的文件名字</param>
         /// <returns></returns>
-        public static bool FtpUpLoadFile(string Url,string BaseFileName,string RomoteFileName)
+        public static bool FtpUpLoadFile(string Url, string BaseFileName, string RomoteFileName)
         {
             bool b = false;
             FtpWebRequest ftpWeb;
             //判断文件是否存在
-            if(File.Exists(BaseFileName))
+            if (File.Exists(BaseFileName))
             {
-                ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://"+Url+"/"+ RomoteFileName));
+                ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + Url + "/" + RomoteFileName));
                 //要发到ftp的命令
                 ftpWeb.Method = WebRequestMethods.Ftp.UploadFile;
                 //指定文件传输类型
                 ftpWeb.UseBinary = true;
                 //验证用户和密码
-                #warning  账号密码待补全
-                ftpWeb.Credentials = new NetworkCredential("","");
+#warning  账号密码待补全
+                ftpWeb.Credentials = new NetworkCredential("", "");
                 //获取响应的流
-                using (Stream rs=ftpWeb.GetRequestStream())
+                using (Stream rs = ftpWeb.GetRequestStream())
                 {
                     //上传文件流
-                    using (FileStream file=new FileStream(BaseFileName,FileMode.OpenOrCreate,FileAccess.ReadWrite))
+                    using (FileStream file = new FileStream(BaseFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
                         //4k字节
                         byte[] buffer = new byte[4096];
-                        int count = file.Read(buffer,0,buffer.Length);
+                        int count = file.Read(buffer, 0, buffer.Length);
                         //判断文件流是
-                        while (count>0)
+                        while (count > 0)
                         {
                             //写入到Ftp文件流而不是本地
-                            rs.Write(buffer,0,count);
-                            count = file.Read(buffer,0,buffer.Length);
+                            rs.Write(buffer, 0, count);
+                            count = file.Read(buffer, 0, buffer.Length);
                         }
                         file.Close();
                         b = true;
@@ -231,27 +231,27 @@ namespace Infrastructrue
         /// <param name="Url"></param>
         /// <param name="FileName"></param>
         /// <returns></returns>
-        public static bool FtpDownLoadFile(string Url,string FileName)
+        public static bool FtpDownLoadFile(string Url, string FileName)
         {
             FtpWebRequest ftpWeb;
             try
             {
-                using (FileStream fs=new FileStream(FileName,FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream(FileName, FileMode.OpenOrCreate))
                 {
-                    ftpWeb = (FtpWebRequest)WebRequest.Create(new Uri("ftp://"+Url+"/"+FileName));
+                    ftpWeb = (FtpWebRequest)WebRequest.Create(new Uri("ftp://" + Url + "/" + FileName));
                     ftpWeb.Method = WebRequestMethods.Ftp.DownloadFile;
                     ftpWeb.UseBinary = true;
                     ftpWeb.ContentOffset = fs.Length;
-                    ftpWeb.Credentials = new NetworkCredential("","");
-                    using (FtpWebResponse webResponse= (FtpWebResponse)ftpWeb.GetResponse())
+                    ftpWeb.Credentials = new NetworkCredential("", "");
+                    using (FtpWebResponse webResponse = (FtpWebResponse)ftpWeb.GetResponse())
                     {
                         fs.Position = fs.Length;
                         byte[] buffer = new byte[4096];
-                        int count = webResponse.GetResponseStream().Read(buffer,0,buffer.Length);
-                        while(count>0)
+                        int count = webResponse.GetResponseStream().Read(buffer, 0, buffer.Length);
+                        while (count > 0)
                         {
-                            fs.Write(buffer,0,count);
-                            count = webResponse.GetResponseStream().Read(buffer,0,buffer.Length);
+                            fs.Write(buffer, 0, count);
+                            count = webResponse.GetResponseStream().Read(buffer, 0, buffer.Length);
                         }
                     }
                     fs.Close();
@@ -260,14 +260,14 @@ namespace Infrastructrue
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message) ;
+                throw new Exception(ex.Message);
             }
         }
 
         public static bool FtpDeleteFile(string Url)
         {
             FtpWebRequest ftpWeb;
-            ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://"+Url));
+            ftpWeb = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + Url));
             ftpWeb.Method = WebRequestMethods.Ftp.DeleteFile;
             ftpWeb.UseBinary = true;
             ftpWeb.Credentials = new NetworkCredential();
@@ -306,6 +306,14 @@ namespace Infrastructrue
             }
         }
 
+        public static int CeilingDivide(this int num, int divideBy)
+        {
+            if (num < 0) throw new ArgumentException("num");
+            if (divideBy <= 0) throw new ArgumentException("divideBy");
+
+            return (num + divideBy - 1) / divideBy;
+        }
+
         public static bool SendMail(MailModel model)
         {
             try
@@ -336,41 +344,6 @@ namespace Infrastructrue
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// 邮件结构体
-        /// </summary>
-        public struct MailModel
-        {
-            /// <summary>
-            /// 收件人地址
-            /// </summary>
-            public string ReceiverAddress { get; set; }
-            /// <summary>
-            /// 收件人姓名
-            /// </summary>
-            public string ReceiverName { get; set; }
-            /// <summary>
-            /// 标题
-            /// </summary>
-            public string Title { get; set; }
-            /// <summary>
-            /// 内容
-            /// </summary>
-            public string Content { get; set; }
-            /// <summary>
-            /// 发件人地址（非必填）
-            /// </summary>
-            public string SenderAddress { get; set; }
-            /// <summary>
-            /// 发件人姓名（非必填）
-            /// </summary>
-            public string SenderName { get; set; }
-            /// <summary>
-            /// 发件人密码（非必填）
-            /// </summary>
-            public string SenderPassword { get; set; }
         }
     }
 }

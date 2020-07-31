@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Domain.Entity
+{
+    public class SystemConfigEntity:BaseEntity
+    {
+        /// <summary>
+        /// 系统名称
+        /// </summary>
+        public string SystemName { get; set; }
+
+        /// <summary>
+        /// 数据初始化是否完成
+        /// </summary>
+        public bool IsDataInited { get; set; }
+
+        /// <summary>
+        /// 数据初始化时间
+        /// </summary>
+        public DateTime DataInitedDate { get; set; }
+    }
+}
