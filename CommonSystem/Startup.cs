@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApplicationLayer.IService;
 using Hangfire;
 using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -133,8 +134,8 @@ namespace CommonSystem
                 }
             });
             //添加一个每天自动在凌晨的时候执行的统计任务    待完善
-            //RecurringJob.AddOrUpdate<ISiteViewService>(x => x.AddOrUpdate(), Cron.Daily());
-            //RecurringJob.AddOrUpdate(() => Console.WriteLine($"Job在{DateTime.Now}执行完成."), Cron.Minutely());
+            RecurringJob.AddOrUpdate<ISiteViewService>(x => x.AddOrUpdate(), Cron.Daily());
+            RecurringJob.AddOrUpdate(() => Console.WriteLine($"Job在{DateTime.Now}执行完成."), Cron.Minutely());
         }
     }
 }

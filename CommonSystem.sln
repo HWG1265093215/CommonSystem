@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "测试Api", "测试Api", "{60DE8619-206B-45DC-BC79-A30233E6E700}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebApi", "TestWebApi\TestWebApi.csproj", "{68C47BD4-2AFB-414E-8630-9C05740CB6B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWebApi", "TestWebApi\TestWebApi.csproj", "{68C47BD4-2AFB-414E-8630-9C05740CB6B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

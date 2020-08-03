@@ -5,7 +5,7 @@ using Domain.Meun;
 
 namespace Domain.Entity
 {
-    public class TaskTemplateEntity:BaseEntity
+    public partial class TaskTemplateEntity:BaseEntity
     {
         /// <summary>
         /// 任务流模板名称

@@ -20,7 +20,6 @@ namespace CommonSystem.Controllers
         {
            
             this.HttpContext.Response.Clear();
-            //_logger.LogError("111111111");
             return View();
         }
 
