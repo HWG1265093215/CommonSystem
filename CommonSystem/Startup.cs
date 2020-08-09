@@ -1,19 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationLayer.IService;
+using CommonSystem.Filter;
+using CommonSystem.MiddleWare;
+using CommonSystem.ModelHelper;
+using Domain;
 using Hangfire;
 using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace CommonSystem
 {
@@ -22,47 +31,55 @@ namespace CommonSystem
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
         }
 
         public IConfiguration Configuration { get; }
-        public ILoggerFactory _loggerFactory { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(cookie =>
+            .AddCookie(cookie =>
+            {
+                //Cookie有效时间
+                cookie.ExpireTimeSpan = TimeSpan.FromMinutes(360);
+                //授权验证没通过则进行登录验证
+                cookie.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Home/Login");
+                //登出 类似于清空Cookie
+                cookie.LogoutPath = new Microsoft.AspNetCore.Http.PathString("/Home/Logout");
+                //定义用于创建Cookie的设置
+                cookie.Cookie = new Microsoft.AspNetCore.Http.CookieBuilder()
                 {
-                    //Cookie有效时间
-                    cookie.ExpireTimeSpan = TimeSpan.FromMinutes(360);
-                    //授权验证没通过则进行登录验证
-                    cookie.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Home/Login");
-                    //登出 类似于清空Cookie
-                    cookie.LogoutPath = new Microsoft.AspNetCore.Http.PathString("/Home/Logout");
-                    //定义用于创建Cookie的设置
-                    cookie.Cookie = new Microsoft.AspNetCore.Http.CookieBuilder()
-                    {
-                        HttpOnly = true,
-                        Name = "CommonSystem-Identity",
-                        Path = "/"
-                    };
-                });
+                    HttpOnly = true,
+                    Name = "CommonSystem-Identity",
+                    Path = "/"
+                };
+            });
+
             //连接sql
             string ConStr = Configuration.GetConnectionString("SqlServer").ToString();
-            //services.AddDbContext<DBContext>(option=>option.UseSqlServer(连接字符串));
+            services.AddDbContext<DBContext>(option=>option.UseSqlServer(ConStr));
             //任务调度连接数据库
-            
             services.AddHangfire(hang=>hang.UseSqlServerStorage(ConStr));
-            //权限验证filter    待添加
             //批量依赖注入待添加
+            //权限验证filter
             services.AddRazorPages();
-            services.AddMvc();
+
+            //移除多余视图引擎
+            services.Configure<RazorViewEngineOptions>(option=>
+            {
+                //{2} 代表区域名称   {1}控制器名称  {0}视图名称
+                option.AreaViewLocationFormats.Clear();
+                option.AreaViewLocationFormats.Add("Area/{2}/Views/{1}/{0}.cshtml");
+                option.AreaViewLocationFormats.Add("Area/{2}/Views/Shared/{0}.cshtml");
+            });
+
+            services.AddMvc(cfg=>cfg.Filters.Add(new ValidateFilter()));
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -73,7 +90,7 @@ namespace CommonSystem
                 app.UseExceptionHandler("/Error");
             }
 
-            loggerFactory.AddNLog();
+           
             //静态文件
             app.UseStaticFiles();
             //认证
@@ -89,9 +106,18 @@ namespace CommonSystem
                 endpoints.MapRazorPages();
             });
             #warning  待添加
-            //记录访问 记录Middleware  待添加
+            //记录访问 记录Middleware
+            app.UseMiddleware<VisitMiddleWare>();
             //初始化数据库及初始数据
-
+            Task.Run(async()=>
+            {
+                using (var scope=app.ApplicationServices.CreateScope())
+                {
+                    var meuns = MeunHelper.GetMeunes();
+                    var dbservice = scope.ServiceProvider.GetService<IDatabaseInitService>();
+                    await dbservice.InitAsync(meuns);
+                }
+            });
             //使用HangFire自动化任务调度
             var HangJobOption = new BackgroundJobServerOptions()
             {
@@ -136,6 +162,16 @@ namespace CommonSystem
             //添加一个每天自动在凌晨的时候执行的统计任务    待完善
             RecurringJob.AddOrUpdate<ISiteViewService>(x => x.AddOrUpdate(), Cron.Daily());
             RecurringJob.AddOrUpdate(() => Console.WriteLine($"Job在{DateTime.Now}执行完成."), Cron.Minutely());
+        }
+    }
+
+    public static class IdentityExtention
+    {
+        public static string GetLoginUserId(this IIdentity identity)
+        {
+            var claim = (identity as ClaimsIdentity)?.FindFirst("");
+
+            return claim == null ? string.Empty : claim.Value;
         }
     }
 }

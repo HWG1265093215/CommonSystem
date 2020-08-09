@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonSystem.ModelHelper;
 using Infrastructrue;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,13 @@ namespace CommonSystem.Controllers
         {
             _logger = logger;
         }
+
+        
+
+
         public IActionResult Index()
         {
-           
-            this.HttpContext.Response.Clear();
+            LoggerHelper.LogError("111111111111111111111111111111111222222222222222222222222222222");
             return View();
         }
 

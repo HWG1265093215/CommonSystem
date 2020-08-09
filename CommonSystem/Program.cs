@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,6 +27,10 @@ namespace CommonSystem
                 {
                     builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", true, true);
                     builder.AddCommandLine(args);
+                }).ConfigureLogging((host, logging) =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(level: LogLevel.Information);
                 }).UseNLog();
     }
 }
