@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using ApplicationLayer.EntityDto.BaseDto;
 
-namespace ApplicationLayer.EntityDto.Task
+namespace ApplicationLayer.EntityDto.TaskDto
 {
     public class TaskTemplateStepDto
     {

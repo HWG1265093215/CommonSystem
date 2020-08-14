@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using ApplicationLayer.EntityDto.BaseDto;
 using Domain.Meun;
 
-namespace ApplicationLayer.EntityDto.Task
+namespace ApplicationLayer.EntityDto.TaskDto
 {
     public class TaskTemplateDto
     {

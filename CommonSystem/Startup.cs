@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationLayer.IService;
+using ApplicationLayer.IServiceImpl;
+using Autofac;
+using AutoMapper;
 using CommonSystem.Filter;
 using CommonSystem.MiddleWare;
 using CommonSystem.ModelHelper;
@@ -15,10 +19,12 @@ using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -57,14 +63,15 @@ namespace CommonSystem
             });
 
             //连接sql
-            string ConStr = Configuration.GetConnectionString("SqlServer").ToString();
-            services.AddDbContext<DBContext>(option=>option.UseSqlServer(ConStr));
-            //任务调度连接数据库
-            services.AddHangfire(hang=>hang.UseSqlServerStorage(ConStr));
-            //批量依赖注入待添加
-            //权限验证filter
-            services.AddRazorPages();
+            string conStr = Configuration.GetConnectionString("SqlServer").ToString();
+            services.AddDbContext<DBContext>(option=>option.UseSqlServer(conStr));
 
+            services.AddParamterConstruct();
+
+            //任务调度连接数据库
+            services.AddHangfire(hang=>hang.UseSqlServerStorage(conStr));
+            //批量依赖注入待添加
+            services.AddRazorPages();
             //移除多余视图引擎
             services.Configure<RazorViewEngineOptions>(option=>
             {
@@ -73,9 +80,31 @@ namespace CommonSystem
                 option.AreaViewLocationFormats.Add("Area/{2}/Views/{1}/{0}.cshtml");
                 option.AreaViewLocationFormats.Add("Area/{2}/Views/Shared/{0}.cshtml");
             });
-
+            //权限验证filter
             services.AddMvc(cfg=>cfg.Filters.Add(new ValidateFilter()));
+            services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
 
+        }
+
+        //https://autofaccn.readthedocs.io/zh/latest/integration/aspnetcore.html  AutoFac Api文档
+        //命名规范   踩坑
+        public void ConfigureContainer(ContainerBuilder  builder)
+        {
+            //注册Aop 添加切面   待完善
+            //builder.RegisterType<CustomAutoFacAopInterception>();
+            //获取依赖注入类
+            var injectDenpency = Assembly.Load("ApplicationLayer");
+            //单接口多实现   待完善
+            //foreach (var item in collection)
+            //{
+
+            //}
+            //获取对应程序集
+            builder.RegisterAssemblyTypes(injectDenpency)
+                .Where(inject => inject.Namespace.EndsWith("IServiceImpl", StringComparison.OrdinalIgnoreCase) && inject.GetInterfaces().Length > 0).AsImplementedInterfaces();
+            //设置属性注入
+            builder.RegisterModule<DefaultModule>();
+            int a = builder.Properties.Count;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,7 +140,7 @@ namespace CommonSystem
             //初始化数据库及初始数据
             Task.Run(async()=>
             {
-                using (var scope=app.ApplicationServices.CreateScope())
+                using (var scope = app.ApplicationServices.CreateScope())
                 {
                     var meuns = MeunHelper.GetMeunes();
                     var dbservice = scope.ServiceProvider.GetService<IDatabaseInitService>();
@@ -119,7 +148,7 @@ namespace CommonSystem
                 }
             });
             //使用HangFire自动化任务调度
-            var HangJobOption = new BackgroundJobServerOptions()
+            var hangJobOption = new BackgroundJobServerOptions()
             {
                 //服务器名字
                 ServerName = Environment.MachineName,
@@ -128,9 +157,9 @@ namespace CommonSystem
                 //执行任务队列
                 Queues = new string[] {"default","api" }
             };
-            app.UseHangfireServer(HangJobOption);
+            app.UseHangfireServer(hangJobOption);
             //设置HangFire控制面板权限验证
-            var HangJobAuth = new BasicAuthAuthorizationFilter(
+            var hangJobAuth = new BasicAuthAuthorizationFilter(
                 new BasicAuthAuthorizationFilterOptions
                 {
                     //加密重定向
@@ -156,7 +185,7 @@ namespace CommonSystem
             {
                 Authorization = new[]
                 {
-                    HangJobAuth
+                    hangJobAuth
                 }
             });
             //添加一个每天自动在凌晨的时候执行的统计任务    待完善
@@ -169,9 +198,46 @@ namespace CommonSystem
     {
         public static string GetLoginUserId(this IIdentity identity)
         {
-            var claim = (identity as ClaimsIdentity)?.FindFirst("");
+            var claim = (identity as ClaimsIdentity)?.FindFirst("LoginUserId");
 
             return claim == null ? string.Empty : claim.Value;
+        }
+
+        //注册服务器实例构造函数参数
+        public static void AddParamterConstruct(this IServiceCollection  services)
+        {
+            //ISet<Type> listType = new HashSet<Type>();
+            //var temp = Assembly.Load("ApplicationLayer");
+            ////获取实现类
+            //var injectDenpency = Assembly.Load("ApplicationLayer").GetTypes().Where(n => n.FullName.Contains("IServiceImpl") && !string.IsNullOrEmpty(n.FullName));
+
+            //foreach (var type in injectDenpency)
+            //{
+            //    foreach (var con in type.GetConstructors())
+            //    {
+            //        foreach (var parameter in con.GetParameters())
+            //        {
+            //            listType.Add(parameter.ParameterType);
+            //        }
+            //    }
+            //}
+
+            //foreach (var list in listType)
+            //{
+            //    var types = AppDomain.CurrentDomain.GetAssemblies()
+            //        .SelectMany(a => a.GetTypes().Where(t => t.GetInterfaces().Contains(list)))
+            //        .ToArray();
+            //    foreach (var impl in types)
+            //    {
+            //        services.AddScoped(list, impl);
+            //    }
+            //}
+
+            services.AddScoped<DbContext,DBContext>();
+            //加载AutoMapper映射关系
+            services.AddScoped<AutoMapper.IConfigurationProvider>(_=>AutoMapperConfig.GetMapperConfiguration());
+            services.AddScoped(_ => AutoMapperConfig.GetMapperConfiguration().CreateMapper());
+
         }
     }
 }

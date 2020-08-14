@@ -19,7 +19,7 @@ namespace Domain
         {
             base.OnModelCreating(modelBuilder);
             var temp = typeof(SystemConfigConfiguration).Assembly
-                .GetTypes().Where(q=>q.GetInterface(typeof(IEntityTypeConfiguration<>).FullName)!=null&&q.FullName.StartsWith("Domain.EntityConfiguration.BaseConfiguration"));
+                .GetTypes().Where(q=>q.GetInterface(typeof(IEntityTypeConfiguration<>).FullName)!=null&&!q.FullName.StartsWith("Domain.EntityConfiguration.BaseConfiguration"));
 
             foreach (var type in temp)
             {

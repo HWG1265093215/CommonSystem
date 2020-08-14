@@ -10,11 +10,11 @@ namespace Domain.Entity
 
         public DateTime CreateTime { get; set; }
 
-        public Boolean IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
 
         public String CreateUserId { get; set; }
 
-        public DateTime LastUpdateTime { get; set; }
+        public DateTime? LastUpdateTime { get; set; }
 
         public string LastUpdateId { get; set; }
     }

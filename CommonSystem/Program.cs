@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -23,11 +24,15 @@ namespace CommonSystem
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).ConfigureAppConfiguration(builder =>
+                })
+                //替换默认容器
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureAppConfiguration(builder =>
                 {
                     builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", true, true);
                     builder.AddCommandLine(args);
-                }).ConfigureLogging((host, logging) =>
+                })
+               
+                .ConfigureLogging((host, logging) =>
                 {
                     logging.ClearProviders();
                     logging.SetMinimumLevel(level: LogLevel.Information);

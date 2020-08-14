@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ApplicationLayer.EntityDto.BaseDto;
 using ApplicationLayer.EntityDto.Task;
+using ApplicationLayer.EntityDto.TaskDto;
 using ApplicationLayer.Filters;
 using Domain.Enums;
 

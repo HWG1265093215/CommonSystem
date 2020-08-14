@@ -1,6 +1,6 @@
 ﻿using Domain.Meun;
 
-namespace ApplicationLayer.EntityDto.Task
+namespace ApplicationLayer.EntityDto.TaskDto
 {
     public class TaskTemplateStepOperateDto
     {

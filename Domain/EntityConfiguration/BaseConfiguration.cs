@@ -18,6 +18,7 @@ namespace Domain.EntityConfiguration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasMaxLength(36);
             builder.Property(x => x.CreateUserId).HasMaxLength(36);
+            builder.Property(x => x.CreateTime).HasColumnType("DateTime");
         }
     }
 }

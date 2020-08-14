@@ -3,7 +3,7 @@ using ApplicationLayer.EntityDto.BaseDto;
 using Domain.Meun;
 using Infrastructrue;
 
-namespace ApplicationLayer.EntityDto.Task
+namespace ApplicationLayer.EntityDto.TaskDto
 {
     public class TaskTemplateFormDto
     {
