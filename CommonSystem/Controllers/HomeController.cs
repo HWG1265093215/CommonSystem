@@ -108,7 +108,9 @@ namespace CommonSystem.Controllers
                 var authenType = CookieAuthenticationDefaults.AuthenticationScheme;
                 var identity = new ClaimsIdentity(authenType);
                 identity.AddClaim(new Claim(ClaimTypes.Name, loginDto.User.LoginName));
+                //原存储在改为Session
                 identity.AddClaim(new Claim("LoginUserId", loginDto.User.Id.ToString()));
+                MyHttpContext.Current.setSession("UserId", loginDto.User.Id.ToString());
                 var properties = new AuthenticationProperties() { IsPersistent = true };
                 var principal = new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync(authenType, principal, properties);
