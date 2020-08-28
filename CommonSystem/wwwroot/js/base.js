@@ -1,5 +1,6 @@
 ﻿(function () {
     //基础扩展Start
+
     //日期扩展
     Date.prototype.format = function (fmt) {
         var o = {

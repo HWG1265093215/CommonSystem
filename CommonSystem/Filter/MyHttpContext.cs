@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -11,17 +12,21 @@ namespace CommonSystem.Filter
 {
     public static class MyHttpContext 
     {
-        public static IServiceProvider _serviceProvider;
+        public static IApplicationBuilder _serviceProvider;
         public static HttpContext Current
         {
             get
             {
-                object factory = _serviceProvider.GetService(typeof(IHttpContextAccessor));
+                var factory = _serviceProvider.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
                 HttpContext context = ((HttpContextAccessor)factory).HttpContext;
                 return context;
             }
         }
 
+        public static void GetServiceProvider(this IApplicationBuilder app)
+        {
+            _serviceProvider = app;
+        }
         /// <summary>
         /// 生成token令牌
         /// </summary>

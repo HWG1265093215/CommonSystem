@@ -1,8 +1,6 @@
 ﻿
-@{
-    ViewBag.Title = "用户首页";
-    Layout = "~/Views/Shared/_Layout_Content.cshtml";
-}
+@{ ViewBag.Title = "用户首页";
+                Layout = "~/Views/Shared/_Layout_Content.cshtml"; }
 @section styles
 {
     <environment names="Development">
@@ -11,6 +9,7 @@
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/css/grid.min.css" asp-append-version="true" />
     </environment>
+    <script src="~/js/jquery.js"></script>
 }
 
 <div class="wrapper wrapper-content">

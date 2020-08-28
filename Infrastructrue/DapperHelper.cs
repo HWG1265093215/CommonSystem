@@ -72,5 +72,11 @@ namespace Infrastructrue
         {
            return DbConnection.Query<T>(ProduceName, dynamic, commandType: CommandType.StoredProcedure).ToList();
         }
+
+        public static dynamic ExcuteProduce(string ProduceName,DynamicParameters dynamic)
+        {
+            var temp=DbConnection.Query(ProduceName, dynamic, commandType: CommandType.StoredProcedure).ToList();
+            return temp;
+        }
     }
 }

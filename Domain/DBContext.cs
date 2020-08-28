@@ -125,6 +125,7 @@ namespace Domain
         /// </summary>
         public DbSet<TaskTemplateStepOperateEntity> TaskTemplateStepOperates { get; set; }
 
+        public DbSet<ModelTempEntity> ModelTemp { get; set; }
         #endregion
     }
 }

@@ -20,14 +20,20 @@
         <link rel="stylesheet" href="~/css/content.min.css" asp-append-version="true" />
     </environment>
     @RenderSection("styles", false)
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/plugins/jqgrid/jquery.jqGrid.js"></script>
+    <script src="~/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="~/js/jqgrid-list.js"></script>
+    <script src="~/js/json2.js"></script>
+    <script src="~/js/base.js"></script>
+    <script src="~/js/grid.min.js" asp-append-version="true"></script>
+
+
+    <script src="~/js/bootstrap.js"></script>
 </head>
 
 <body class="gray-bg">
     @RenderBody()
-    <environment names="Development">
-        <script src="~/js/jquery.js"></script>
-        <script src="~/js/bootstrap.js"></script>
-    </environment>
     <environment names="Staging,Production">
         <script src="~/js/content.min.js" asp-append-version="true"></script>
     </environment>

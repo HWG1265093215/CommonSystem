@@ -1,0 +1,160 @@
+﻿@{ ViewBag.Title = "模板配置";
+    Layout = "~/Views/Shared/_Layout_Content.cshtml"; }
+@section styles
+{
+    <environment names="Development">
+        <link href="~/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/css/grid.min.css" asp-append-version="true" />
+    </environment>
+
+    <style type="text/css">
+        #pager_list_left
+        {
+            display:none;
+        }
+        ::-webkit-scrollbar-thumb 
+        {
+            background-color:#00ffff;
+            height:5px;
+        }
+        ::-webkit-scrollbar {
+            height:12px;
+        }
+       /* #tableDetails{
+           vertical-align:auto;
+        }*/
+
+            #tableDetails th,td {
+                height: 34px;
+                line-height: 34px;
+            }
+        #tableDetails tr td {
+            height: 34px;
+            line-height: 34px;
+        }
+    </style>
+}
+
+
+<div class="wrapper wrapper-content" style="height:100%;width:145%;background-color:rgb(255,255,255);">
+    <div class="ibox float-e-margins">
+        <div>
+            <div class="ibox-title">
+                <h5>用户管理</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up" id="btnIcon"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content col-lg-3 col-md-3" style="width:350px;">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input id="txtSearchKey" type="text" class="input form-control" placeholder="搜索关键字" />
+                        <span class="input-group-btn">
+                            <button id="btnSearch" class="btn btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="jqGrid_wrapper">
+                    <table id="table_list"></table>
+                    <div id="pager_list"></div>
+                </div>
+            </div>
+            <div class="col-md-9 col-lg-9" style="padding-left:30px;">
+                <table id="tableDetails" style="width:100%;" border="1" class="table table-bordered" ></table>
+            </div>
+        </div>
+      
+    </div>
+  
+</div>
+
+
+@section scripts
+{  
+    <script type="text/javascript">
+
+        function SearchData() {
+            var json = {
+                keywords: $("#txtSearchKey").val()
+            };
+            XPage.Search(json);
+        }
+
+      
+        function AddTable() {
+            $.get("@Url.Action("GetSqlTableDetails")", { TableName: "ModelTemp" }, function (data) {
+                let tempColIndx = 0;
+                $("#tableDetails").html("");
+                for (var i = 0; i < Math.ceil(data.length/4); i++) {
+                    var tbDetails = $("#tableDetails");
+                    tbDetails.append("<tr id='TR_" + (i+1) + "'></tr>");
+                    for (var j = 0; j < 4; j++) {
+                        if (tempColIndx < data.length) {
+                            var tb = "";
+                            tb += "<th style='width:180px'><span style='text-align:left;float:left;padding:0px;'><input type='checkbox' name='ck' checked='checked'/></span><span style='text-align:right;float:right'>序号：" + data[tempColIndx].colorder + "</span></th>";
+                            tb += "<td style='width:250px;'><span style='text-align:left;float:left;'>" + (data[tempColIndx].Expand == '' ? data[tempColIndx].name : data[tempColIndx].Expand) + "</span><span style='text-align:right;float:right'><button type='button' class='btn btn-primary' onclick='EditModel()' >编辑</button></span></td>";
+                            $("#TR_" + (i + 1)).append(tb);
+                            tempColIndx++;
+                        }
+                    }
+                    
+                }
+            });
+        }
+
+        function EditModel() {
+            parent.layer.open({
+                title: "测试",
+                type: 2,
+                content: "@Url.Action("Edit")",
+                area: ['800px', '600px'],
+                //btn: ['保存', '返回'],
+                //yes: function (index, layer) {
+                //    debugger;
+                //    console.log(layer);
+                //    alert($("#txt_Number").val());
+                //    alert("2");
+                //},
+                //btn2: function () {
+                //    alert();
+                //}
+            });
+        }
+
+
+        $(document).ready(function () {
+            var config = {
+                title: '用户列表',
+                url: '@Url.Action("GetListWithPager")',
+                colNames: ['模板名称', '表名','路径','标识'],
+                colModel: [
+                    { name: 'tempName', index: 'tempName', width: 60 },
+                    { name: 'tempTable', index: 'tempTable', width: 60, key: true },
+                    { name: 'contentPath', index: 'contentPath', width: 60, hidden: true },
+                    { name: 'id', index: 'id', width: 60, hidden: true }
+                ]
+            };
+            JucheapGrid.Load(config);
+
+            $("#btnSearch").click(function () {
+                AddTable();
+            });
+
+            @*$.get("@Url.Action("GetSqlTableDetails")", { TableName: "ModelTemp" }, function (data) {
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var tb = "";
+                    for (var i = 0; i < 4; i++) {
+                        tb += "<td><span style='text-align:left'><input type='checkbox' name='ck' checked='checked'/></span><span style='text-align:right'>" + data[i].colorder + "</span></td>";
+                    }
+                    $("#tableDetails").append("<tr>" + tb + "</tr>");
+                }
+            });*@
+        });
+    </script>
+}
+

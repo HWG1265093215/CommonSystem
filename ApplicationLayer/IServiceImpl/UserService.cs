@@ -161,7 +161,8 @@ namespace ApplicationLayer.IServiceImpl
             {
                 Id = Guid.NewGuid().ToString("N"),
                 UserId = userId,
-                RoleId = roleId
+                RoleId = roleId,
+                CreateTime=DateTime.Now
             });
             await _context.SaveChangesAsync();
             return true;

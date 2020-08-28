@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "编辑";
+    Layout = "~/Views/Shared/_Layout_Content.cshtml";
+}
+
+@model ApplicationLayer.EntityDto.BaseDto.ModelEntityDto
+
+<div class="wrapper wrapper-content container">
+    @using (Html.BeginForm("EditModel", "Demo", FormMethod.Post, new { @class = "form-horizontal form", id = "formModel" }))
+    {
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.columnName)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.columnName, new { @class = "form-control disabled", disabled = "disabled" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.txt_Number)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.txt_Number)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.columnSpan)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.columnSpan)
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.displayShowName)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.displayShowName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.defaultValue)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.defaultValue)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.isRequest)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.isRequest)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.isDisable)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.isDisable)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.isCombobox)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.isCombobox)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.meunType)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.meunType)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">@Html.LabelFor(m => m.meunTable)：</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.meunTable)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-8">
+                <button class="btn btn-info" type="submit" id="btnSave">添加</button>
+                <button class="btn btn-white" type="button" id="btnBack" data-type="window">返回</button>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/js/page/jucheap.action.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("input").addClass("form-control");
+    });
+</script>

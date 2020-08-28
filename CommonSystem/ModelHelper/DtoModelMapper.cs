@@ -93,6 +93,7 @@ namespace CommonSystem.ModelHelper
             config.CreateMap<TaskTemplateStepEntity, TaskTemplateStepDto>().ReverseMap();
             config.CreateMap<TaskTemplateStepOperateEntity, TaskTemplateStepOperateDto>().ReverseMap();
             config.CreateMap<TaskTemplateEntity, TaskTemplateDto>().ReverseMap();
+            config.CreateMap<ModelTempEntity, ModelTempDto>().ReverseMap();
         }
     }
 

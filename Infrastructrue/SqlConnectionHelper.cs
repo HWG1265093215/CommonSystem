@@ -19,10 +19,10 @@ namespace Infrastructrue
         //初始化连接字符串    之后由配置文件读取
         private SqlConnectionHelper()
         {
-            Connection = "";
+            Connection = "Data Source=222.92.117.211,2017; Initial Catalog=TestDataBase; Pooling=True; UID=sa;PWD=susoft;connect Timeout=120;";
         }
         //线程使用
-        private static readonly object obj = null;
+        private static readonly object obj = new object();
         //单例模式
         private static SqlConnectionHelper helperCon = null;
         private static IDbConnection _db = null;

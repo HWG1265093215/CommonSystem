@@ -251,6 +251,11 @@ namespace ApplicationLayer.EntityDto.BaseDto
         /// 删除站内信页面Id
         /// </summary>
         public const string MessageDeleteId = "00045";
+
+        /// <summary>
+        /// 模板页页面Id
+        /// </summary>
+        public const string DemoPageId = "00048";
         #endregion
 
         #region 任务模板常量配置

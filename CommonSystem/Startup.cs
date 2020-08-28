@@ -19,6 +19,7 @@ using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,7 @@ namespace CommonSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(cookie =>
             {
@@ -68,6 +70,8 @@ namespace CommonSystem
 
             services.AddParamterConstruct();
 
+            services.AddSession();
+
             //任务调度连接数据库
             services.AddHangfire(hang=>hang.UseSqlServerStorage(conStr));
             //批量依赖注入待添加
@@ -80,6 +84,7 @@ namespace CommonSystem
                 option.AreaViewLocationFormats.Add("Area/{2}/Views/{1}/{0}.cshtml");
                 option.AreaViewLocationFormats.Add("Area/{2}/Views/Shared/{0}.cshtml");
             });
+            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
             //权限验证filter
             services.AddMvc(cfg=>cfg.Filters.Add(new ValidateFilter()));
             services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
@@ -95,13 +100,10 @@ namespace CommonSystem
             //获取依赖注入类
             var injectDenpency = Assembly.Load("ApplicationLayer");
             //单接口多实现   待完善
-            //foreach (var item in collection)
-            //{
-
-            //}
+            
             //获取对应程序集
             builder.RegisterAssemblyTypes(injectDenpency)
-                .Where(inject => inject.Namespace.EndsWith("IServiceImpl", StringComparison.OrdinalIgnoreCase) && inject.GetInterfaces().Length > 0).AsImplementedInterfaces();
+                .Where(inject => inject.Namespace.EndsWith("IServiceImpl", StringComparison.OrdinalIgnoreCase) && inject.GetInterfaces().Length > 0).AsImplementedInterfaces().PropertiesAutowired();
             //设置属性注入
             builder.RegisterModule<DefaultModule>();
             int a = builder.Properties.Count;
@@ -119,7 +121,8 @@ namespace CommonSystem
                 app.UseExceptionHandler("/Error");
             }
 
-           
+            app.GetServiceProvider();
+            app.UseSession();
             //静态文件
             app.UseStaticFiles();
             //认证
