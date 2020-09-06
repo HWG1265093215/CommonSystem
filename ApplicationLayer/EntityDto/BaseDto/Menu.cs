@@ -256,6 +256,22 @@ namespace ApplicationLayer.EntityDto.BaseDto
         /// 模板页页面Id
         /// </summary>
         public const string DemoPageId = "00048";
+        /// <summary>
+        /// 删除按钮
+        /// </summary>
+        public const string DemoPageDeleteId = "00049";
+        /// <summary>
+        /// 生成Table信息
+        /// </summary>
+        public const string DemoPageGetTableId = "00050";
+        /// <summary>
+        /// 保存xml文件及更新数据
+        /// </summary>
+        public const string DemoPageSaveXml = "00051";
+        /// <summary>
+        /// 获取xml文件数据
+        /// </summary>
+        public const string DemoPageGetXmlData = "00052";
         #endregion
 
         #region 任务模板常量配置

@@ -15,5 +15,9 @@ namespace ApplicationLayer.EntityDto.BaseDto
         public string ContentPath { get; set; }
 
         public string TempTable { get; set; }
+
+        public string TempType { get; set; }
+
+        public string ModelOrgId { get; set; }
     }
 }

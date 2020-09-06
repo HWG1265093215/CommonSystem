@@ -24,7 +24,7 @@ namespace Domain.Entity
         public static void InitEntity(this BaseEntity entity)
         {
             entity.Id = Guid.NewGuid().ToString("N");
-            entity.CreateTime = DateTime.Now;
+            entity.CreateTime = DateTime.Now; 
         }
 
         public static void CreateEntity(this BaseEntity baseEntity,string id)
@@ -32,6 +32,12 @@ namespace Domain.Entity
             baseEntity.InitEntity();
             baseEntity.LastUpdateTime = DateTime.Now;
             baseEntity.CreateUserId = id;
+        }
+
+        public static void UpdateEntity(this BaseEntity entity,string userId)
+        {
+            entity.LastUpdateTime = DateTime.Now;
+            entity.LastUpdateId = userId;
         }
     }
 }

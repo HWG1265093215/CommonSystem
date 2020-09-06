@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CommonSystem.ModelHelper
+namespace ApplicationLayer.ExtendHelper
 {
     [AttributeUsage(AttributeTargets.All,Inherited =false)]
     public class FieldAttribute:Attribute

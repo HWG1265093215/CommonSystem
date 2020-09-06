@@ -120,7 +120,7 @@ namespace CommonSystem
             {
                 app.UseExceptionHandler("/Error");
             }
-
+           
             app.GetServiceProvider();
             app.UseSession();
             //静态文件
@@ -131,25 +131,6 @@ namespace CommonSystem
             app.UseRouting();
             //授权
             app.UseAuthorization();
-          
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(name: "Default", pattern: "{Controller=Home}/{Action=Index}/{id?}");
-                endpoints.MapRazorPages();
-            });
-            #warning  待添加
-            //记录访问 记录Middleware
-            app.UseMiddleware<VisitMiddleWare>();
-            //初始化数据库及初始数据
-            Task.Run(async()=>
-            {
-                using (var scope = app.ApplicationServices.CreateScope())
-                {
-                    var meuns = MeunHelper.GetMeunes();
-                    var dbservice = scope.ServiceProvider.GetService<IDatabaseInitService>();
-                    await dbservice.InitAsync(meuns);
-                }
-            });
             //使用HangFire自动化任务调度
             var hangJobOption = new BackgroundJobServerOptions()
             {
@@ -158,7 +139,7 @@ namespace CommonSystem
                 //最大并行数
                 WorkerCount = 3,
                 //执行任务队列
-                Queues = new string[] {"default","api" }
+                Queues = new string[] { "default", "api" }
             };
             app.UseHangfireServer(hangJobOption);
             //设置HangFire控制面板权限验证
@@ -191,6 +172,25 @@ namespace CommonSystem
                     hangJobAuth
                 }
             });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(name: "Default", pattern: "{Controller=Home}/{Action=Index}/{id?}");
+                endpoints.MapRazorPages();
+            });
+            #warning  待添加
+            //记录访问 记录Middleware
+            app.UseMiddleware<VisitMiddleWare>();
+            //初始化数据库及初始数据
+            Task.Run(async()=>
+            {
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    var meuns = MeunHelper.GetMeunes();
+                    var dbservice = scope.ServiceProvider.GetService<IDatabaseInitService>();
+                    await dbservice.InitAsync(meuns);
+                }
+            });
+           
             //添加一个每天自动在凌晨的时候执行的统计任务    待完善
             RecurringJob.AddOrUpdate<ISiteViewService>(x => x.AddOrUpdate(), Cron.Daily());
             RecurringJob.AddOrUpdate(() => Console.WriteLine($"Job在{DateTime.Now}执行完成."), Cron.Minutely());

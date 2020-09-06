@@ -4,14 +4,15 @@
 }
 
 @model ApplicationLayer.EntityDto.BaseDto.ModelEntityDto
-
-<div class="wrapper wrapper-content container">
-    @using (Html.BeginForm("EditModel", "Demo", FormMethod.Post, new { @class = "form-horizontal form", id = "formModel" }))
-    {
+<script src="~/js/vue.js"></script>
+<script src="~/js/page/jucheap.action.js"></script>
+<div class="wrapper wrapper-content container" id="app" style="width:100%;overflow-y:hidden;">
+     
+    <form method="get" class="form-horizontal form" id="formModel">
         <div class="form-group">
             <label class="col-sm-3 control-label">@Html.LabelFor(m => m.columnName)：</label>
             <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.columnName, new { @class = "form-control disabled", disabled = "disabled" })
+                @Html.TextBoxFor(m => m.columnName, new { @class = "form-control disabled"})
             </div>
         </div>
 
@@ -47,21 +48,30 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">@Html.LabelFor(m => m.isRequest)：</label>
             <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.isRequest)
+                @*@Html.TextBoxFor(m => m.isRequest)*@
+                <select id="isRequest" name="isRequest" class="form-control">
+                    <option v-bind:value="Y.key" v-for="Y in YS">{{Y.value}}</option>
+                </select>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-sm-3 control-label">@Html.LabelFor(m => m.isDisable)：</label>
             <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.isDisable)
+                @*@Html.TextBoxFor(m => m.isDisable)*@
+                <select id="isDisable" name="isDisable" class="form-control">
+                    <option v-bind:value="Y.key" v-for="Y in YS">{{Y.value}}</option>
+                </select>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-sm-3 control-label">@Html.LabelFor(m => m.isCombobox)：</label>
             <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.isCombobox)
+                @*@Html.TextBoxFor(m => m.isCombobox)*@
+                <select id="isCombobox" name="isCombobox" class="form-control">
+                    <option v-bind:value="Y.key" v-for="Y in YS">{{Y.value}}</option>
+                </select>
             </div>
         </div>
 
@@ -79,17 +89,42 @@
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             <div class="col-sm-offset-3 col-sm-8">
                 <button class="btn btn-info" type="submit" id="btnSave">添加</button>
                 <button class="btn btn-white" type="button" id="btnBack" data-type="window">返回</button>
             </div>
-        </div>
-    }
+        </div>*@
+    </form>
 </div>
-<script src="~/js/page/jucheap.action.js"></script>
+
 <script type="text/javascript">
+
+
     $(function () {
-        $("input").addClass("form-control");
+        new Vue({
+            el: '#app',
+            data: {
+                YS: [
+                    { key: 'Y', value: '是' },
+                    { key: 'N', value: '否' }
+                ]
+            }
+        });
+
+
+        $("#isRequest").val('@Model.isRequest');
+        $("#isDisable").val('@Model.isDisable');
+        $("#isCombobox").val('@Model.isCombobox');
+
+        $("input[type=text]").addClass("form-control");
+
+        $("#btnBack").click(function () {
+            window.parent.Test();
+        });
+
+
     });
+
+
 </script>

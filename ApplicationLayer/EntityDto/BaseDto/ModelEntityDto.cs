@@ -36,5 +36,8 @@ namespace ApplicationLayer.EntityDto.BaseDto
 
         [Display(Name ="跨行")]
         public int columnSpan { get; set; }
+
+        [Display(Name ="隐藏标志")]
+        public string isShow { get; set; }
     }
 }

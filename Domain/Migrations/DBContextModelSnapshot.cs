@@ -345,10 +345,16 @@ namespace Domain.Migrations
                     b.Property<DateTime?>("LastUpdateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ModelOrgId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TempName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TempTable")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TempType")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -436,6 +442,31 @@ namespace Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PathCodes");
+                });
+
+            modelBuilder.Entity("Domain.Entity.RPG_Proc_ReportEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastUpdateId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RPG_Proc_Report");
                 });
 
             modelBuilder.Entity("Domain.Entity.RoleEntity", b =>

@@ -11,5 +11,11 @@ namespace ApplicationLayer.IService
     public interface IModelTempService
     {
         Task<PagedResult<ModelTempDto>> SearchAsync(BaseFilter baseFilter);
+
+        Task<Boolean> Add(ModelTempDto tempDto);
+
+        Task<ModelTempDto> Find(string id);
+
+        Task<bool> DeleteAsync(List<string> ids);
     }
 }

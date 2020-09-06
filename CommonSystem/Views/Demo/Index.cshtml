@@ -10,72 +10,134 @@
     </environment>
 
     <style type="text/css">
-        #pager_list_left
-        {
-            display:none;
+        #pager_list_left {
+            display: none;
         }
-        ::-webkit-scrollbar-thumb 
-        {
-            background-color:#00ffff;
-            height:5px;
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #00ffff;
+            height: 5px;
         }
+
         ::-webkit-scrollbar {
-            height:12px;
+            height: 12px;
         }
-       /* #tableDetails{
+        /* #tableDetails{
            vertical-align:auto;
         }*/
 
-            #tableDetails th,td {
-                height: 34px;
-                line-height: 34px;
-            }
+        #tableDetails th, td {
+            height: 34px;
+            line-height: 34px;
+        }
+
         #tableDetails tr td {
             height: 34px;
             line-height: 34px;
         }
+
+        .form-inline>.form-group{
+            padding:0px 10px 10px 5px;
+        }
     </style>
 }
 
-
-<div class="wrapper wrapper-content" style="height:100%;width:145%;background-color:rgb(255,255,255);">
-    <div class="ibox float-e-margins">
-        <div>
-            <div class="ibox-title">
-                <h5>用户管理</h5>
-                <div class="ibox-tools">
-                    <a class="collapse-link">
-                        <i class="fa fa-chevron-up" id="btnIcon"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="ibox-content col-lg-3 col-md-3" style="width:350px;">
-                <div class="form-group">
-                    <div class="input-group">
-                        <input id="txtSearchKey" type="text" class="input form-control" placeholder="搜索关键字" />
-                        <span class="input-group-btn">
-                            <button id="btnSearch" class="btn btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
-                        </span>
+<body>
+    <div class="wrapper wrapper-content" style="height:100%;width:145%;background-color:rgb(255,255,255);">
+        <div class="ibox float-e-margins">
+            <div>
+                <div class="ibox-title">
+                    <h5>用户管理</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up" id="btnIcon"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="jqGrid_wrapper">
-                    <table id="table_list"></table>
-                    <div id="pager_list"></div>
+                <div class="ibox-content col-lg-3 col-md-3" style="width:350px;">
+                    <div class="form-group" style="margin-bottom:0px;">
+                        <div class="input-group">
+                            <input id="txtSearchKey" type="text" class="input form-control" placeholder="搜索关键字" />
+                            <span class="input-group-btn">
+                                <button id="btnSearch" class="btn btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+                            </span>
+                        </div>
+                        <div class="input-group">
+                            <button class="btn btn-info" type="button" id="btnCreateModel" style="margin-right:8px;">创建模板</button>
+                            <button class="btn btn-info" type="button" id="btnDeleteModel">删除模板</button>
+                        </div>
+                    </div>
+                  
+                    <div class="jqGrid_wrapper">
+                        <table id="table_list"></table>
+                        <div id="pager_list"></div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-lg-9" style="padding-left:30px;">
+                    <form class="form-inline" id="form">
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="TempName">
+                                    模板名称：
+                                </label>
+
+                                <input data-val="true" data-val-required="The Module field is required." id="TempName" name="TempName" type="text" class="form-control">
+
+                            </div>
+
+                            <div class="form-group">
+                                <lable for="TempTable">
+                                    模板数据表：
+                                </lable>
+
+                                <select id="TempTable" name="TempTable" class="form-control">
+                                </select>
+
+                            </div>
+
+                            <div class="form-group">
+                                <lable for="TempType">
+                                    模板类型：
+                                </lable>
+                                <input data-val="true" data-val-required="The txt_ModuleType field is required." id="TempType" name="TempType" type="text" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <lable for="ModelOrgId">
+                                    应用用户：
+                                </lable>
+                                <input data-val="true" data-val-required="The ModelOrgId field is required." id="ModelOrgId" name="ModelOrgId" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row" style="padding:10px 0px;">
+                            <div class="col-sm-12 col-md-12" @*style="padding-left:0px;"*@>
+                                <button class="btn btn-info" type="button" id="btnSaveModel">保存模板</button>
+                                <button class="btn btn-info" type="button" id="btnBase">提取基础模板</button>
+                                <button class="btn btn-info" type="button" id="btnProc">提取报表模板</button>
+
+                            </div>
+                        </div>
+                    </form>
+                    <table id="tableDetails" style="width:100%;padding-left:0px;" border="1" class="table table-bordered"></table>
                 </div>
             </div>
-            <div class="col-md-9 col-lg-9" style="padding-left:30px;">
-                <table id="tableDetails" style="width:100%;" border="1" class="table table-bordered" ></table>
-            </div>
         </div>
-      
     </div>
-  
+</body>
+<div id="div" style="display:none;width:100%;overflow-y:hidden;">
+
 </div>
 
 
+
+<script src="~/js/jquery.validate.js"></script>
+<script src="~/js/jquery.validate.unobtrusive.js"></script>
 @section scripts
-{  
+{
     <script type="text/javascript">
+
+        var col = [];
+        var ModelIndex ="";
 
         function SearchData() {
             var json = {
@@ -84,77 +146,149 @@
             XPage.Search(json);
         }
 
-      
-        function AddTable() {
-            $.get("@Url.Action("GetSqlTableDetails")", { TableName: "ModelTemp" }, function (data) {
-                let tempColIndx = 0;
-                $("#tableDetails").html("");
-                for (var i = 0; i < Math.ceil(data.length/4); i++) {
-                    var tbDetails = $("#tableDetails");
-                    tbDetails.append("<tr id='TR_" + (i+1) + "'></tr>");
-                    for (var j = 0; j < 4; j++) {
-                        if (tempColIndx < data.length) {
-                            var tb = "";
-                            tb += "<th style='width:180px'><span style='text-align:left;float:left;padding:0px;'><input type='checkbox' name='ck' checked='checked'/></span><span style='text-align:right;float:right'>序号：" + data[tempColIndx].colorder + "</span></th>";
-                            tb += "<td style='width:250px;'><span style='text-align:left;float:left;'>" + (data[tempColIndx].Expand == '' ? data[tempColIndx].name : data[tempColIndx].Expand) + "</span><span style='text-align:right;float:right'><button type='button' class='btn btn-primary' onclick='EditModel()' >编辑</button></span></td>";
-                            $("#TR_" + (i + 1)).append(tb);
-                            tempColIndx++;
-                        }
+        function CreateDataTable(data) {
+            let tempColIndx = 0;
+            col = data;
+            $("#tableDetails").html("");
+            for (var i = 0; i < Math.ceil(data.length / 4); i++) {
+                var tbDetails = $("#tableDetails");
+                tbDetails.append("<tr id='TR_" + (i + 1) + "'></tr>");
+                for (var j = 0; j < 4; j++) {
+                    if (tempColIndx < data.length) {
+                        var tb = "";
+                        tb += "<th style='width:180px'><span style='text-align:left;float:left;padding:0px;'><input type='checkbox' id='ck_" + data[tempColIndx].columnName + "'" + (data[tempColIndx].isShow == "Y" ? "checked='checked'" : "") + " /></span><span style='text-align:right;float:right'>序号：" + data[tempColIndx].txt_Number + "</span></th>";
+                        tb += "<td style='width:250px;'><span style='text-align:left;float:left;'>" + (data[tempColIndx].displayShowName == '' ? data[tempColIndx].columnName : data[tempColIndx].displayShowName) + "</span><span style='text-align:right;float:right'><button type='button' class='btn btn-primary' onclick='EditModel(" + data[tempColIndx].txt_Number + ")' id='td_" + data[tempColIndx].txt_Number + "'>编辑</button></span></td>";
+                        $("#TR_" + (i + 1)).append(tb);
+
+                        let index = data[tempColIndx].txt_Number-1;
+                        $("#ck_" + data[tempColIndx].columnName).click(function () {
+                            debugger;
+                            let checked = $(this).prop("checked");
+                            if (checked) {
+                                col[index].isShow = "Y";
+                            }
+                            else {
+                                col[index].isShow = "N";
+                            }
+                        });
+                        tempColIndx++;
                     }
-                    
                 }
-            });
-        }
-
-        function EditModel() {
-            parent.layer.open({
-                title: "测试",
-                type: 2,
-                content: "@Url.Action("Edit")",
-                area: ['800px', '600px'],
-                //btn: ['保存', '返回'],
-                //yes: function (index, layer) {
-                //    debugger;
-                //    console.log(layer);
-                //    alert($("#txt_Number").val());
-                //    alert("2");
-                //},
-                //btn2: function () {
-                //    alert();
-                //}
-            });
+            }
         }
 
 
-        $(document).ready(function () {
+        function EditModel(id) {
+            let EditData = JSON.stringify(col[id-1]);
+            $.get("@Url.Action("Edit")", { Query: EditData}, function (data) {
+                $("#div").html(data);
+                parent.layer.open({
+                    title: "测试",
+                    type: 1,
+                    content: $("#div").html(),
+                    area: ['800px', '500px'],
+                    btn: ['保存', '返回'],
+                    yes: function (index, layer) {
+                        let tempI = top.$("#txt_Number").val();
+                        col[id - 1] = top.$("#formModel").serializeObject();
+                        col[tempI - 1].txt_Number = id;
+                        col.sort(function (a, b) { return a.txt_Number - b.txt_Number });
+                        CreateDataTable(col);
+                        parent.layer.closeAll();
+                    },
+                    btn2: function () {
+
+                    }
+                });
+            });
+        }
+
+        $(function () {
             var config = {
                 title: '用户列表',
                 url: '@Url.Action("GetListWithPager")',
-                colNames: ['模板名称', '表名','路径','标识'],
+                colNames: ['模板名称', '表名','路径','标识','类型','应用厂家'],
                 colModel: [
                     { name: 'tempName', index: 'tempName', width: 60 },
-                    { name: 'tempTable', index: 'tempTable', width: 60, key: true },
+                    { name: 'tempTable', index: 'tempTable', width: 60 },
                     { name: 'contentPath', index: 'contentPath', width: 60, hidden: true },
-                    { name: 'id', index: 'id', width: 60, hidden: true }
+                    { name: 'id', index: 'id', width: 60, hidden: true, key: true },
+                    { name: 'tempType', width: 60, hidden: true },
+                    { name: 'modelOrgId', width: 60, hidden: true }
                 ]
             };
-            JucheapGrid.Load(config);
 
-            $("#btnSearch").click(function () {
-                AddTable();
+             JucheapGrid.Load(config);
+
+            $("#table_list").on("dblclick", "tr[role=row]", function () {
+                let index = $(this).index();
+                let row = $('#table_list').jqGrid("getRowData")[index - 1];
+                ModelIndex = row.id;
+                $("#TempName").val(row.tempName);
+                $("#TempTable").val(row.tempTable);
+                $("#TempType").val(row.tempType);
+                $("#ModelOrgId").val(row.modelOrgId);
+                $.get("@Url.Action("GetXmlData")", { id: ModelIndex }, function (data) {
+                    CreateDataTable(data);
+                });
             });
 
-            @*$.get("@Url.Action("GetSqlTableDetails")", { TableName: "ModelTemp" }, function (data) {
-                console.log(data);
+            $("#btnSearch").click(function () {
+                SearchData();
+            });
+
+
+            $("#btnDeleteModel").click(function () {
+                  XPage.DelData("@Url.Action("Delete")");
+            });
+
+            $("#btnCreateModel").click(function () {
+                $("#form")[0].reset();
+                $("#tableDetails").html("");
+                ModelIndex = "";
+            });
+
+            $.get("@Url.Action("GetEfTable")", function (data) {
+                var select = $("#TempTable");
                 for (var i = 0; i < data.length; i++) {
-                    var tb = "";
-                    for (var i = 0; i < 4; i++) {
-                        tb += "<td><span style='text-align:left'><input type='checkbox' name='ck' checked='checked'/></span><span style='text-align:right'>" + data[i].colorder + "</span></td>";
-                    }
-                    $("#tableDetails").append("<tr>" + tb + "</tr>");
+                    var option = "<option>" + data[i] + "</option>";
+                    select.append(option);
                 }
-            });*@
+            });
+
+            $("#btnProc").click(function () {
+                $("#btnBase").click();
+            });
+
+            $("#btnBase").click(function () {
+                $.get("@Url.Action("GetSqlTableDetails")", { TableName: $("#TempTable").val(), ProcName: $("#TempType").val() }, function (data) {
+                    CreateDataTable(data);
+                });
+                ModelIndex = "";
+            });
+
+            $("#btnSaveModel").click(function () {
+                $.get("@Url.Action("EditModel")",
+                    {
+                        TempName: $("#TempName").val(),
+                        TempTable: $("#TempTable").val(),
+                        TempType: $("#TempType").val(),
+                        ModelOrgId: $("#ModelOrgId").val(),
+                        JsonData: JSON.stringify(col),
+                        ModelIndex: ModelIndex
+                    }, function (data) {
+                        debugger;
+                        console.log(data);
+                        parent.layer.open({
+                            type: 0,
+                            content: data.msg
+                        });
+                        $("#btnSearch").click();
+                        $("#btnCreateModel").click();
+                    });
+            });
         });
+
     </script>
 }
 

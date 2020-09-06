@@ -10,7 +10,7 @@
             colNames: config.colNames,
             colModel: config.colModel,
             viewrecords: true,
-            multiselect: true,
+            multiselect: false,
             rownumbers: true,
             autowidth: true,
             height: "100%",
@@ -44,7 +44,9 @@
     //获取jqgrid的编辑内容
     GetData: function () {
         var id = $('#table_list').jqGrid('getGridParam', 'selrow');
+       
         if (id)
+
             return $('#table_list').jqGrid("getRowData", id);
         else
             return null;

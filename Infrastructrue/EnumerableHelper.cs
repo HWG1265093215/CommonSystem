@@ -38,6 +38,17 @@ namespace Infrastructrue
             }
         }
 
+        public static void NewForEach<T>(this IEnumerable<T> source,Action<T> action)
+        {
+            if (source == null || action == null)
+                return;
+
+            foreach (var element in source)
+            {
+                action(element);
+            }
+        }
+
         public static bool AnyOne<T>(this IEnumerable<T> source)
         {
             return source?.Any() ?? false;

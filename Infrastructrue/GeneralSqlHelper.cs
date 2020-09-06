@@ -8,10 +8,10 @@ namespace Infrastructrue
 {
     public static  class GeneralSqlHelper<T> where T:class 
     {
-        public static string _Insert = string.Empty;
-        public static string _Update = string.Empty;
-        public static string _Delete = string.Empty;
-        public static string _Select = string.Empty;
+        private static string _Insert = string.Empty;
+        private static string _Update = string.Empty;
+        private static string _Delete = string.Empty;
+        private static string _Select = string.Empty;
 
         static GeneralSqlHelper()
         {

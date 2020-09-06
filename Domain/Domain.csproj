@@ -11,6 +11,8 @@
     <Compile Remove="Migrations\20200814062021_ModelFirst2020-08-14.Designer.cs" />
     <Compile Remove="Migrations\20200814062210_ModelFirst2020-08-14.cs" />
     <Compile Remove="Migrations\20200814062210_ModelFirst2020-08-14.Designer.cs" />
+    <Compile Remove="Migrations\20200903022908_ModelTemp_Add_isShow.cs" />
+    <Compile Remove="Migrations\20200903022908_ModelTemp_Add_isShow.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

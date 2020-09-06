@@ -125,7 +125,15 @@ namespace Domain
         /// </summary>
         public DbSet<TaskTemplateStepOperateEntity> TaskTemplateStepOperates { get; set; }
 
+        /// <summary>
+        /// 模板
+        /// </summary>
         public DbSet<ModelTempEntity> ModelTemp { get; set; }
+
+        /// <summary>
+        /// 动态读取存储过程
+        /// </summary>
+        public DbSet<RPG_Proc_ReportEntity> RPG_Proc_Report { get; set; }
         #endregion
     }
 }

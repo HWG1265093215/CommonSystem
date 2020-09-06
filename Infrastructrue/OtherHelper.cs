@@ -117,20 +117,25 @@ namespace Infrastructrue
         /// <param name="document"></param>
         /// <param name="UrlPath"></param>
         /// <param name="list"></param>
-        public static void CreateListXml<T>(this XmlDocument document, string UrlPath, List<T> list)
+        public static void CreateListXml<T>(string UrlPath, List<T> list)
         {
             XmlDocument xml = new XmlDocument();
             XmlElement element = xml.CreateElement("Root");
             foreach (var item in list)
             {
-                XmlNode node = xml.CreateElement(typeof(T).Name);
-                element.AppendChild(node);
+                XmlElement node = xml.CreateElement(typeof(T).Name);
                 foreach (var property in typeof(T).GetProperties())
                 {
                     XmlElement node1 = xml.CreateElement(property.Name);
-                    node1.InnerText = typeof(T).GetProperty(property.Name).GetValue(typeof(T), null).ToString();
+                    node1.InnerText = item.GetType().GetProperty(property.Name).GetValue(item, null)?.ToString();
                     node.AppendChild(node1);
                 }
+                element.AppendChild(node);
+            }
+            xml.AppendChild(element);
+            if(!System.IO.Directory.Exists(UrlPath.Substring(0,UrlPath.LastIndexOf(@"\"))))
+            {
+                System.IO.Directory.CreateDirectory(UrlPath.Substring(0, UrlPath.LastIndexOf(@"\")));
             }
             xml.Save(UrlPath);
         }
@@ -154,11 +159,11 @@ namespace Infrastructrue
             doc.Save(url);
         }
 
-        public static List<T> SerialierList<T>(this XmlDocument xml, string url)
+        public static List<T> SerialierList<T>(string url)
         {
             XmlDocument document = new XmlDocument();
             document.Load(url);
-            XmlNodeList nodeList = xml.DocumentElement.ChildNodes;
+            XmlNodeList nodeList = document.DocumentElement.ChildNodes;
             List<T> list = new List<T>();
             foreach (XmlNode item in nodeList)
             {
@@ -312,6 +317,25 @@ namespace Infrastructrue
             if (divideBy <= 0) throw new ArgumentException("divideBy");
 
             return (num + divideBy - 1) / divideBy;
+        }
+
+        public static List<T> Serializer<T>(string urlPath)
+        {
+            List<T> list = new List<T>();
+
+            if(!System.IO.File.Exists(urlPath))
+            {
+                return new List<T>();
+            }
+
+            using (XmlReader reader=XmlReader.Create(urlPath))
+            {
+                XmlSerializer serializer = new XmlSerializer(list.GetType());
+
+                list = (List<T>)serializer.Deserialize(reader);
+
+                return list;
+            }
         }
     }
 }
