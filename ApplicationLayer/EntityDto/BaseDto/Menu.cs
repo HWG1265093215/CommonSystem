@@ -274,6 +274,12 @@ namespace ApplicationLayer.EntityDto.BaseDto
         public const string DemoPageGetXmlData = "00052";
         #endregion
 
+        #region 任务调度模块
+        public const string JobPageId = "00053";
+
+
+        #endregion
+
         #region 任务模板常量配置
 
         /// <summary>

@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "任务调度";
+    Layout = "~/Views/Shared/_Layout_Content.cshtml";
+}
+@section styles{
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/css/plugins/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+}
+@section scripts{
+
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/bootstrap.js"></script>
+    <script src="~/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+}
+
+
+<script src="https://cdn.bootcss.com/moment.js/2.24.0/moment-with-locales.js"></script>
+
+<style type="text/css">
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #home .input-group-addon {
+        position: relative;
+        left: -15px;
+        z-index: 1000;
+    }
+
+    #datetimepicker2 {
+        margin-left: 15px;
+    }
+</style>
+<body>
+    <div class="container" style="width:100%;margin:0px;padding:0px;">
+
+        <!-- 导航 -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+
+        </ul>
+
+        <form role="form" class="form-horizontal">
+            <div class="form-group" style="margin:10px 0px;height:40px;">
+                <label for="inputEmail3" class="col-sm-1 col-md-1 control-label">Email</label>
+                <div class="col-sm-3 col-md-3">
+                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+                </div>
+                <div class="col-sm-2 col-md-2" style="line-height:40px;">
+                    <span style="color:red">*格式：命名空间+类+方法名</span>
+                </div>
+            </div>
+
+
+            <!-- 带显示效果的内容 -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="home">
+                    <div class="form-group" style="margin:0px;">
+                        <label for="datetimepicker2" class="col-sm-1 col-md-1 control-label">开始日期</label>
+                        <div class="input-group col-sm-3 col-md-3">
+                            <input type="text" class="form-control" @*value="2014-11-11"*@ id="datetimepicker2">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="profile">2<h1>1111111111111</h1></div>
+            </div>
+            <div class="form-group" style="clear:both;">
+                <button type="button" class="btn btn-primary " style="margin:0px 20px;">提交</button>
+                <button type="button" class="btn btn-danger " style="margin:0px 20px;">取消</button>
+            </div>
+        </form>
+    </div>
+</body>
+<script type="text/javascript">
+    $('#datetimepicker2').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        locale: moment.locale('zh-cn')
+    });
+    $(function () {
+        $("#home").on("click", "span[class=input-group-addon]", function () {
+            $('#datetimepicker2').datetimepicker('show');
+        });
+    });
+</script>
+
