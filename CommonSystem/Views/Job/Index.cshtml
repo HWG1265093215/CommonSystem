@@ -2,22 +2,6 @@
     ViewBag.Title = "任务调度";
     Layout = "~/Views/Shared/_Layout_Content.cshtml";
 }
-@section styles{
-    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-    <link href="~/css/plugins/datapicker/datepicker3.css" rel="stylesheet" />
-    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-}
-@section scripts{
-
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/bootstrap.js"></script>
-    <script src="~/js/plugins/datapicker/bootstrap-datepicker.js"></script>
-}
-
-
-<script src="https://cdn.bootcss.com/moment.js/2.24.0/moment-with-locales.js"></script>
-
 <style type="text/css">
     * {
         margin: 0px;
@@ -26,64 +10,140 @@
 
     #home .input-group-addon {
         position: relative;
-        left: -15px;
+        left: -10px;
         z-index: 1000;
     }
 
-    #datetimepicker2 {
+    .form-control {
         margin-left: 15px;
+        padding-left: 15px;
+    }
+
+    #home input[class="form-control"],select[class="form-control"] {
+        /*        background-color:red;*/
+        width: 265px;
+        margin-left: 30px;
+    }
+
+    #home div[class="form-group"] {
+        margin: 10px 0px 15px 0px;
     }
 </style>
-<body>
-    <div class="container" style="width:100%;margin:0px;padding:0px;">
 
-        <!-- 导航 -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+<div class="container" style="width:100%;margin:0px;padding:0px;overflow:hidden;">
 
-        </ul>
+    <!-- 导航 -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">简单任务</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">复杂任务</a></li>
 
-        <form role="form" class="form-horizontal">
-            <div class="form-group" style="margin:10px 0px;height:40px;">
-                <label for="inputEmail3" class="col-sm-1 col-md-1 control-label">Email</label>
-                <div class="col-sm-3 col-md-3">
-                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-                </div>
-                <div class="col-sm-2 col-md-2" style="line-height:40px;">
-                    <span style="color:red">*格式：命名空间+类+方法名</span>
-                </div>
+    </ul>
+
+    <form role="form" class="form-horizontal">
+        <div class="form-group" style="margin:10px 0px;height:40px;">
+            <label for="JobMethod" class="col-sm-1 col-md-1 control-label">Email</label>
+            <div class="col-sm-3 col-md-3">
+                <input type="text" class="form-control" id="JobMethod" placeholder="*格式：命名空间+类+方法名" style="width:293px;"> 
             </div>
+        </div>
 
 
-            <!-- 带显示效果的内容 -->
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="home">
-                    <div class="form-group" style="margin:0px;">
-                        <label for="datetimepicker2" class="col-sm-1 col-md-1 control-label">开始日期</label>
-                        <div class="input-group col-sm-3 col-md-3">
-                            <input type="text" class="form-control" @*value="2014-11-11"*@ id="datetimepicker2">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
+        <!-- 带显示效果的内容 -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="home">
+                <div class="form-group">
+                    <label for="StratJobTime" class="col-sm-1 col-md-1 control-label">开始日期</label>
+                    <div class="input-group col-sm-3 col-md-3">
+                        <input type="text" class="form-control"  id="StratJobTime">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="profile">2<h1>1111111111111</h1></div>
+
+                <div class="form-group">
+                    <label for="timeSpanType" class="col-sm-1 col-md-1 control-label">间隔类型</label>
+                    <div class="input-group col-sm-3 col-md-3">
+                        @*<input type="text" class="form-control" id="timeSpanType" style="width:293px;">*@
+                        <select id="timeSpanType" style="width:293px;"  class="form-control">
+                            <option v-bind:value="Time.key" v-for="Time in  timeSpan">{{Time.value}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="timeSpan" class="col-sm-1 col-md-1 control-label">时间间隔</label>
+                    <div class="input-group col-sm-3 col-md-3">
+                        <input type="text" class="form-control" @*value="2014-11-11"*@ id="timeSpan" style="width:293px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="RepeatCount" class="col-sm-1 col-md-1 control-label">重复次数</label>
+                    <div class="input-group col-sm-3 col-md-3">
+                        <input type="number" class="form-control" @*value="2014-11-11"*@ value="1" max="100" min="1" id="RepeatCount" style="width:293px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="RepeatAway" class="col-sm-1 col-md-1 control-label">无限次</label>
+                    <div class="input-group col-sm-3 col-md-3">
+                        <input type="checkbox" class="js-switch" style="margin-left:30px;position:relative;top:3px;" />
+                    </div>
+                </div>
             </div>
-            <div class="form-group" style="clear:both;">
-                <button type="button" class="btn btn-primary " style="margin:0px 20px;">提交</button>
-                <button type="button" class="btn btn-danger " style="margin:0px 20px;">取消</button>
+
+
+            <div role="tabpanel" class="tab-pane fade" id="profile">
+                <div class="form-group">
+                    <label for="ComplexTask" class="col-sm-1 col-md-1 control-label" style="margin-left:15px;">复杂任务</label>
+                    <div class="input-group col-sm-3 col-md-3" style="padding-left:15px;">
+                        <input type="text" class="form-control" @*value="2014-11-11"*@ id="ComplexTask" style="width:293px;">
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
-</body>
+        </div>
+        
+        <div class="form-group" style="clear:both;">
+            <button type="button" class="btn btn-primary " style="margin: 10px 0px 0px 60px;" id="Submit">提交</button>
+            <button type="button" class="btn btn-danger " style="margin: 10px 0px 0px 30px;">取消</button>
+        </div>
+    </form>
+</div>
 <script type="text/javascript">
-    $('#datetimepicker2').datetimepicker({
-        format: 'YYYY-MM-DD HH:mm:ss',
-        locale: moment.locale('zh-cn')
-    });
+   
     $(function () {
-        $("#home").on("click", "span[class=input-group-addon]", function () {
-            $('#datetimepicker2').datetimepicker('show');
+        
+
+        new Vue({
+            el: "#home",
+            data: {
+                timeSpan: [
+                    { key: '0', value: "秒" },
+                    { key: '1', value: "分" },
+                    { key: '2', value: "时" },
+                    { key: '3', value: "天" }
+                ]
+            }
+        });
+
+        $("#Submit").click(function () {
+
+        });
+
+        $('#StratJobTime').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,  //一周从哪一天开始
+            //startDate 开始时间
+            todayBtn: true,//当天日期按钮
+            autoclose: true,//选完时间后是否自动关闭
+            todayHighlight: true,//当天日期高亮
+            startView: 2,//选完时间最先展示的视图  0分钟  1小时  2天   3月  4年
+            minView: 2,//最精确的时间  同上
+            forceParse: 0,
+            format: "yyyy-mm-dd"
+        });
+
+        $("body").on("click", "span[class=input-group-addon]", function () {
+            $(this).prev().datetimepicker('show')
         });
     });
 </script>

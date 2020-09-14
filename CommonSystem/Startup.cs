@@ -15,6 +15,7 @@ using CommonSystem.MiddleWare;
 using CommonSystem.ModelHelper;
 using Domain;
 using Hangfire;
+using Hangfire.Common;
 using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -120,7 +121,7 @@ namespace CommonSystem
             {
                 app.UseExceptionHandler("/Error");
             }
-           
+
             app.GetServiceProvider();
             app.UseSession();
             //静态文件
@@ -190,10 +191,10 @@ namespace CommonSystem
                     await dbservice.InitAsync(meuns);
                 }
             });
-           
+
             //添加一个每天自动在凌晨的时候执行的统计任务    待完善
-            RecurringJob.AddOrUpdate<ISiteViewService>(x => x.AddOrUpdate(), Cron.Daily());
-            RecurringJob.AddOrUpdate(() => Console.WriteLine($"Job在{DateTime.Now}执行完成."), Cron.Minutely());
+            //RecurringJob.AddOrUpdate<ISiteViewService>(x => x.AddOrUpdate(), Cron.Daily());
+            //RecurringJob.AddOrUpdate<Test>(n=>n.TestConsoleStr(DateTime.Now.ToString()), Cron.Minutely());
         }
     }
 
@@ -241,6 +242,16 @@ namespace CommonSystem
             services.AddScoped<AutoMapper.IConfigurationProvider>(_=>AutoMapperConfig.GetMapperConfiguration());
             services.AddScoped(_ => AutoMapperConfig.GetMapperConfiguration().CreateMapper());
 
+        }
+
+       
+    }
+
+    public class Test
+    {
+        public void TestConsoleStr(string str)
+        {
+            Console.WriteLine(str);
         }
     }
 }

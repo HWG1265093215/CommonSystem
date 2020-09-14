@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Infrastructrue\Infrastructrue.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="HangFireJob\" />
+  </ItemGroup>
+
 </Project>
